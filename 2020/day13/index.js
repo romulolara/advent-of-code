@@ -14,21 +14,11 @@ const readFile = () => {
 
 const notes = readFile();
 
-//Each bus has an ID number that also indicates how often the bus leaves for the airport.
-
-//Bus schedules are defined based on a timestamp that measures the number of minutes since
-// some fixed reference point in the past. At timestamp 0, every bus simultaneously departed from the sea port.
-
-//The time this loop takes a particular bus is also its ID number:
-// the bus with ID 5 departs from the sea port at timestamps 0, 5, 10, 15, and so on.
-
-//Your notes (your puzzle input) consist of two lines.
-// The first line is your estimate of the earliest timestamp you could depart on a bus.
-// The second line lists the bus IDs that are in service according to the shuttle company;
-// entries that show x must be out of service, so you decide to ignore them.
-
 const earliestTime = Number(notes[0]);
-const idBuses = notes[1].replace(/,x/g, "").split(",");
+const idBuses = notes[1]
+  .replace(/,x/g, "")
+  .split(",")
+  .map((b) => Number(b));
 
 console.log({ earliestTime, idBuses });
 
@@ -39,7 +29,6 @@ let earliestBus = {
 };
 
 for (let bus of idBuses) {
-  bus = Number(bus);
   let loops = Math.trunc(earliestTime / bus);
   if (earliestTime % bus > 0) {
     loops += 1;
@@ -57,3 +46,29 @@ earliestBus.waitTime = earliestBus.time - earliestTime;
 earliestBus.calcPart1 = earliestBus.bus * earliestBus.waitTime;
 
 console.log({ earliestBus });
+
+const notesArray = notes[1].split(",");
+const busOffset = (bus) => {
+  return notesArray.indexOf(`${bus}`);
+};
+
+const isBusDepartAt = (bus, timestamp) => {
+  const busTimestamp = timestamp + busOffset(bus);
+  return busTimestamp % bus === 0;
+};
+
+const subsequentBusDepartAt = () => {
+  const firstBus = idBuses[0];
+  let time = firstBus,
+    step = firstBus;
+  for (let i = 1; i < idBuses.length; i++) {
+    while (!isBusDepartAt(idBuses[i], time)) {
+      time += step;
+    }
+    step *= idBuses[i];
+  }
+  return time;
+};
+
+// based on https://github.com/Akumatic/Advent-of-Code/tree/master/2020/13
+console.log({ calcPart2: subsequentBusDepartAt() });
