@@ -15,17 +15,10 @@ const readFile = () => {
 const lines = readFile();
 const numbers = lines.map((n) => Number(n));
 
-let increases = 0;
-let beforeMeasure = undefined;
-
-numbers.forEach((n, i) => {
-  if (n > beforeMeasure) {
-		increases++;
-	}
-	beforeMeasure = n;
-});
-
-console.log({ increases });
-
-
-
+function countIncreases(numberList = []) {
+  return numberList.reduce(
+    (total, n, i) => (n > numberList[i - 1] ? ++total : total),
+    0
+  );
+}
+console.log({ increases: countIncreases(numbers) });
