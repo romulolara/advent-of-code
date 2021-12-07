@@ -22,3 +22,13 @@ function countIncreases(numberList = []) {
   );
 }
 console.log({ increases: countIncreases(numbers) });
+
+function aggregateIn3(numberList = [], sums = []) {
+  if (numberList.length >= 3) {
+    sums.push(numberList[0] + numberList[1] + numberList[2]);
+    return aggregateIn3(numberList.slice(1), sums);
+  }
+  return sums;
+}
+
+console.log({ increases: countIncreases(aggregateIn3(numbers)) });
